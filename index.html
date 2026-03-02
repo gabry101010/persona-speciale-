@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Mia Persona Speciale - Mamma</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
@@ -12,7 +17,11 @@
             padding: 20px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #333;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
         }
+
         .container {
             max-width: 800px;
             margin: 0 auto;
@@ -20,27 +29,110 @@
             padding: 40px;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 10;
         }
+
         h1 {
             color: #764ba2;
             text-align: center;
             margin-bottom: 30px;
         }
+
         .section {
             margin-bottom: 30px;
         }
+
         .section h2 {
             color: #667eea;
             border-bottom: 2px solid #667eea;
             padding-bottom: 10px;
         }
+
         .section p {
             font-size: 16px;
             text-align: justify;
         }
+
         .heart {
             color: #e74c3c;
             font-size: 24px;
+            display: inline-block;
+            animation: heartBeat 1.5s ease-in-out infinite;
+        }
+
+        .heart:nth-child(odd) {
+            animation-delay: 0s;
+        }
+
+        .heart:nth-child(even) {
+            animation-delay: 0.1s;
+        }
+
+        @keyframes heartBeat {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+        }
+
+        /* Cuori che cadono */
+        .falling-heart {
+            position: fixed;
+            font-size: 30px;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.8;
+        }
+
+        @keyframes fall {
+            0% {
+                top: -50px;
+                opacity: 1;
+                transform: translateX(0) rotateZ(0deg);
+            }
+            50% {
+                transform: translateX(100px) rotateZ(180deg);
+            }
+            100% {
+                top: 100vh;
+                opacity: 0;
+                transform: translateX(-100px) rotateZ(360deg);
+            }
+        }
+
+        @keyframes fall-left {
+            0% {
+                top: -50px;
+                opacity: 1;
+                transform: translateX(0) rotateZ(0deg);
+            }
+            50% {
+                transform: translateX(-100px) rotateZ(180deg);
+            }
+            100% {
+                top: 100vh;
+                opacity: 0;
+                transform: translateX(100px) rotateZ(360deg);
+            }
+        }
+
+        .falling-heart.fall-slow {
+            animation: fall 8s linear infinite;
+        }
+
+        .falling-heart.fall-medium {
+            animation: fall 6s linear infinite;
+        }
+
+        .falling-heart.fall-fast {
+            animation: fall 4s linear infinite;
+        }
+
+        .falling-heart.left {
+            animation: fall-left 8s linear infinite !important;
         }
     </style>
 </head>
@@ -80,5 +172,46 @@
             </p>
         </div>
     </div>
+
+    <script>
+        // Funzione per creare cuori che cadono
+        function createFallingHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('falling-heart');
+            heart.innerHTML = '❤️';
+            
+            // Posizione orizzontale casuale
+            const randomLeft = Math.random() * window.innerWidth;
+            heart.style.left = randomLeft + 'px';
+            
+            // Velocità casuale
+            const speeds = ['fall-slow', 'fall-medium', 'fall-fast'];
+            const randomSpeed = speeds[Math.floor(Math.random() * speeds.length)];
+            heart.classList.add(randomSpeed);
+            
+            // Direzione casuale (sinistra o destra)
+            if (Math.random() > 0.5) {
+                heart.classList.add('left');
+            }
+            
+            // Aggiungi il cuore al body
+            document.body.appendChild(heart);
+            
+            // Rimuovi il cuore dopo che l'animazione è finita
+            const animationDuration = heart.classList.contains('fall-slow') ? 8000 : 
+                                      heart.classList.contains('fall-medium') ? 6000 : 4000;
+            setTimeout(() => {
+                heart.remove();
+            }, animationDuration);
+        }
+        
+        // Crea un cuore ogni 300ms
+        setInterval(createFallingHeart, 300);
+        
+        // Crea alcuni cuori iniziali
+        for (let i = 0; i < 5; i++) {
+            setTimeout(createFallingHeart, i * 100);
+        }
+    </script>
 </body>
 </html>
